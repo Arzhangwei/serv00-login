@@ -1,13 +1,19 @@
 import json
 import asyncio
 from pyppeteer import launch
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import aiofiles
 import random
 import requests
 import os
 import paramiko
 import datetime
+
+
+
+
+
+
 
 # 从环境变量中获取 Telegram Bot Token 和 Chat ID
 ss = requests.session()
@@ -46,8 +52,9 @@ async def ssh_with_key(hostname, userName, command,passWord):
         ssh_client.close()
 
 
-def format_to_iso(date):
-    return date.strftime('%Y-%m-%d %H:%M:%S')
+def format_to_iso(dt):
+  """Formats a datetime object to ISO 8601 string."""
+  return dt.isoformat()
 
 async def delay_time(ms):
     await asyncio.sleep(ms / 1000)
@@ -123,9 +130,10 @@ async def main():
         is_logged_in = await login(username, password, panel)
 
         if is_logged_in:
-            current_utc_time = datetime.now().astimezone(datetime.timezone.utc)
-            now_beijing = format_to_iso(current_utc_time + timedelta(hours=8))
-            success_message = f'{serviceName}账号 {username} 于北京时间 {now_beijing}（UTC时间 {current_utc_time}）登录成功！'
+            current_utc_time = datetime.now(timezone.utc)  # Get UTC time with timezone awareness
+            now_beijing = current_utc_time + timedelta(hours=8)  # Add 8 hours for Beijing time
+            beijing_iso = format_to_iso(now_beijing)  
+            success_message = f'{serviceName}账号 {username} 于北京时间 {beijing_iso}（UTC时间 {current_utc_time}）登录成功！'
             message += success_message + '\n'
             print(success_message)
             await pushWX(success_message)
