@@ -86,7 +86,7 @@ async def main():
     for account in accounts:
         username = account['username']
         password = account['password']
-        panel = account['panel']
+        panel = account['panelnum']
 
         serviceName = 'ct8' if 'ct8' in panel else 'serv00'
         is_logged_in = await login(username, password, panel)
