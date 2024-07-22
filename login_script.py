@@ -9,7 +9,7 @@ import os
 
 # 从环境变量中获取 Telegram Bot Token 和 Chat ID
 PUSHPLUS_TOKEN = os.getenv('PUSHPLUS_TOKEN')
-pushplus = f'http://www.pushplus.plus/send?token={PUSHPLUS_TOKEN)}&title=Serv00自动续期&content='
+pushplus = f'http://www.pushplus.plus/send?token={PUSHPLUS_TOKEN}&title=Serv00自动续期&content='
 
 async def push_wx(warnInfo):
     response = requests.get(f"{pushplus}{warnInfo}",verify=False)
