@@ -1,7 +1,7 @@
 import json
 import asyncio
 from pyppeteer import launch
-from datetime import datetime, timedelta, timezone
+
 import aiofiles
 import random
 import requests
@@ -52,9 +52,6 @@ async def ssh_with_key(hostname, userName, command,passWord):
         ssh_client.close()
 
 
-def format_to_iso(dt):
-  """Formats a datetime object to ISO 8601 string."""
-  return dt.isoformat()
 
 async def delay_time(ms):
     await asyncio.sleep(ms / 1000)
@@ -130,10 +127,8 @@ async def main():
         is_logged_in = await login(username, password, panel)
 
         if is_logged_in:
-            current_utc_time = datetime.now(timezone.utc)  # Get UTC time with timezone awareness
-            now_beijing = current_utc_time + timedelta(hours=8)  # Add 8 hours for Beijing time
-            beijing_iso = format_to_iso(now_beijing)  
-            success_message = f'{serviceName}账号 {username} 于北京时间 {beijing_iso}（UTC时间 {current_utc_time}）登录成功！'
+
+            success_message = f'{serviceName}账号 {username} 登录成功！'
             message += success_message + '\n'
             print(success_message)
             await pushWX(success_message)
