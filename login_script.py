@@ -8,8 +8,13 @@ import requests
 import os
 
 # 从环境变量中获取 Telegram Bot Token 和 Chat ID
-TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
-TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+PUSHPLUS_TOKEN = os.getenv('PUSHPLUS_TOKEN')
+pushplus = f'http://www.pushplus.plus/send?token={PUSHPLUS_TOKEN)}&title=Serv00自动续期&content='
+
+async def push_wx(warnInfo):
+    response = requests.get(f"{pushplus}{warnInfo}",verify=False)
+    if "code\": \"0" in response.text:
+        pass
 
 def format_to_iso(date):
     return date.strftime('%Y-%m-%d %H:%M:%S')
@@ -92,6 +97,7 @@ async def main():
             success_message = f'{serviceName}账号 {username} 于北京时间 {now_beijing}（UTC时间 {now_utc}）登录成功！'
             message += success_message + '\n'
             print(success_message)
+            await push_wx(success_message)
         else:
             message += f'{serviceName}账号 {username} 登录失败，请检查{serviceName}账号和密码是否正确。\n'
             print(f'{serviceName}账号 {username} 登录失败，请检查{serviceName}账号和密码是否正确。')
@@ -100,34 +106,10 @@ async def main():
         await delay_time(delay)
         
     message += f'所有{serviceName}账号登录完成！'
-    await send_telegram_message(message)
+    
     print(f'所有{serviceName}账号登录完成！')
 
-async def send_telegram_message(message):
-    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-    payload = {
-        'chat_id': TELEGRAM_CHAT_ID,
-        'text': message,
-        'reply_markup': {
-            'inline_keyboard': [
-                [
-                    {
-                        'text': '问题反馈❓',
-                        'url': 'https://t.me/yxjsjl'
-                    }
-                ]
-            ]
-        }
-    }
-    headers = {
-        'Content-Type': 'application/json'
-    }
-    try:
-        response = requests.post(url, json=payload, headers=headers)
-        if response.status_code != 200:
-            print(f"发送消息到Telegram失败: {response.text}")
-    except Exception as e:
-        print(f"发送消息到Telegram时出错: {e}")
+
 
 if __name__ == '__main__':
     asyncio.run(main())
