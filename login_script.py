@@ -122,6 +122,7 @@ async def main():
         password = account['password']
         panel = account['panelnum']
         sshIPaddress = account['sshIPaddress']
+        sshCommand = account['sshCommand']
 
         serviceName = 'ct8' if 'ct8' in panel else 'serv00'
         is_logged_in = await login(username, password, panel)
@@ -139,15 +140,16 @@ async def main():
         delay = random.randint(1000, 8000)
         await delay_time(delay)
         
+        stdout_result = await ssh_with_key(sshIPaddress,username,sshCommand,password)
+        print(stdout_result)
+        if 'xray进程正在运行' in stdout_result:
+            print('xray进程正在运行')
+            await pushWX(f'{serviceName}账号,xray进程正在运行')
     message += f'所有{serviceName}账号登录完成！'
     
     print(f'所有{serviceName}账号登录完成！')
 
-    stdout_result = await ssh_with_key(sshIPaddress,username,"sh /usr/home/bankwjj/check_xray.sh",password)
-    print(stdout_result)
-    if 'xray进程正在运行' in stdout_result:
-        print('xray进程正在运行')
-
+    
 
 if __name__ == '__main__':
     asyncio.run(main())
