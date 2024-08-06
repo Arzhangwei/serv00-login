@@ -18,6 +18,10 @@ check_and_run_xray() {
     fi
 }
 
-
+libaba
 
 serv00面板设置cron作业，GitHub 登录延期以及补充登录ssh并检查xray。
+
+
+
+
